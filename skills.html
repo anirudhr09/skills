@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Elite Skills Showcase — A small Flex in Different formats</title>
+  <meta name="color-scheme" content="dark" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="preconnect" href="https://unpkg.com" crossorigin />
+  <style>
+    /* ---------- Design Tokens ---------- */
+    :root {
+      --bg: #070b12;
+      --elev-1: #0d1320;
+      --elev-2: #0f1830;
+      --card: #101a2b;
+      --ink: #e6f2ff;
+      --muted: #a7b1c2;
+      --line: #1b2741;
+      --accent: #86e1ff;
+      /* cyan */
+      --accent-2: #8c7bff;
+      /* violet */
+      --accent-3: #00ffa3;
+      /* mint */
+      --warn: #ffb86b;
+      --good: #7ef7a1;
+      --shadow: 0 8px 40px rgba(0, 0, 0, .45), inset 0 0 0 1px rgba(255, 255, 255, .03);
+      --radius-xl: 20px;
+      --radius-2xl: 28px;
+      --pad: clamp(16px, 2.4vw, 28px);
+      --section-gap: clamp(36px, 6vw, 72px);
+    }
+
+    /* ---------- Base ---------- */
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      height: 100%
+    }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 600px at 10% -10%, #0c1430 0%, transparent 30%),
+        radial-gradient(1000px 600px at 110% 110%, #0a1b2b 0%, transparent 35%),
+        var(--bg);
+      color: var(--ink);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    a {
+      color: var(--accent)
+    }
+
+    .shell {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: calc(var(--pad) + 8px) var(--pad) var(--pad);
+    }
+
+    header.hero {
+      display: grid;
+      gap: 12px;
+      justify-items: start;
+      margin-bottom: var(--section-gap);
+    }
+
+    .chip {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      border-radius: 100px;
+      padding: 6px 12px;
+      background: linear-gradient(90deg, rgba(134, 225, 255, .18), rgba(140, 123, 255, .18));
+      border: 1px solid rgba(255, 255, 255, .08);
+      box-shadow: var(--shadow);
+    }
+
+    .title {
+      font-size: clamp(28px, 3.5vw, 44px);
+      font-weight: 800;
+      letter-spacing: .2px;
+      line-height: 1.15;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2) 60%, var(--accent-3));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      max-width: 72ch;
+    }
+
+    section.block {
+      margin-top: var(--section-gap);
+      background: linear-gradient(180deg, rgba(255, 255, 255, .02), rgba(255, 255, 255, .00));
+      border: 1px solid var(--line);
+      border-radius: var(--radius-2xl);
+      box-shadow: var(--shadow);
+      overflow: clip;
+    }
+
+    .block-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px var(--pad);
+      background: linear-gradient(180deg, rgba(20, 28, 48, .65), rgba(14, 20, 34, .35));
+      border-bottom: 1px solid var(--line);
+    }
+
+    .block-head h2 {
+      margin: 0;
+      font-size: clamp(18px, 2.2vw, 24px);
+      letter-spacing: .3px;
+    }
+
+    .block-body {
+      padding: var(--pad);
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: #0b1323;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* ---------- 1) Skill Galaxy (Three.js) ---------- */
+    .galaxy-wrap {
+      position: relative;
+      height: min(64vh, 540px);
+      border-radius: var(--radius-xl);
+      background: radial-gradient(1000px 400px at 60% -20%, rgba(140, 123, 255, .12), transparent 40%),
+        radial-gradient(1200px 600px at -10% 120%, rgba(0, 255, 163, .12), transparent 40%),
+        #0a1120;
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    #galaxyCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .legend {
+      position: absolute;
+      inset: auto 16px 16px auto;
+      display: grid;
+      gap: 6px;
+      padding: 8px 10px;
+      background: rgba(11, 19, 35, 0.75);
+      border: 1px solid rgba(255, 255, 255, .08);
+      border-radius: 12px;
+      font-size: 12px;
+      color: var(--muted);
+      backdrop-filter: blur(6px);
+    }
+
+    .legend .key {
+      display: grid;
+      grid-auto-flow: column;
+      justify-content: start;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      display: inline-block
+    }
+
+    .tooltip {
+      position: absolute;
+      pointer-events: none;
+      padding: 10px 12px;
+      background: #0d1528;
+      border: 1px solid rgba(255, 255, 255, .09);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      color: var(--ink);
+      font-size: 12px;
+      transform: translate(-50%, -130%);
+      will-change: transform, opacity;
+      opacity: 0;
+      transition: opacity .15s ease;
+      max-width: 240px;
+      z-index: 3;
+    }
+
+    .tooltip.visible {
+      opacity: 1
+    }
+
+    /* ---------- 2) Flip Cards with Analogies ---------- */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      perspective: 1200px;
+      transform-style: preserve-3d;
+      border-radius: var(--radius-xl);
+    }
+
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 170px;
+      transition: transform .7s cubic-bezier(.2, .8, .2, 1);
+      transform-style: preserve-3d;
+      border-radius: inherit;
+    }
+
+    .card:hover .card-inner {
+      transform: rotateY(180deg)
+    }
+
+    .face {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      border-radius: inherit;
+      padding: 16px;
+      backface-visibility: hidden;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .front {
+      background:
+        radial-gradient(500px 150px at 10% 0%, rgba(134, 225, 255, .12), transparent 40%),
+        var(--card);
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: .3px;
+    }
+
+    .back {
+      background:
+        radial-gradient(600px 240px at 90% 110%, rgba(140, 123, 255, .12), transparent 45%),
+        #0c1627;
+      transform: rotateY(180deg);
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.4;
+      text-align: center;
+    }
+
+    .badge-mini {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, .08);
+      background: rgba(255, 255, 255, .03);
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* ---------- 3) Project ↔ Skill Graph (D3) ---------- */
+    .wrap {
+      max-width: 1100px;
+      margin: 32px auto;
+      padding: 0 16px
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, .02), rgba(255, 255, 255, 0));
+      box-shadow: 0 12px 40px rgba(0, 0, 0, .45), inset 0 0 0 1px rgba(255, 255, 255, .03);
+      overflow: hidden;
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(18, 26, 48, .7), rgba(10, 18, 34, .35))
+    }
+
+    .card-head h2 {
+      margin: 0;
+      font-size: 18px
+    }
+
+    .legend {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    .legend .k {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #0c162b
+    }
+
+    .sw {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      display: inline-block
+    }
+
+    .box {
+      position: relative;
+      height: 560px;
+    }
+
+    .box-mask {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      border-radius: 0 0 20px 20px
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: 100%
+    }
+
+    .link {
+      stroke: #2a3658;
+      stroke-opacity: .5;
+      fill: none
+    }
+
+    .link.anim-dash {
+      stroke-dasharray: 8 8;
+      animation: dash 6s linear infinite
+    }
+
+    .link.highlight {
+      stroke: #6aa3ff;
+      stroke-opacity: 1
+    }
+
+    @keyframes dash {
+      to {
+        stroke-dashoffset: -16
+      }
+    }
+
+    .node {
+      cursor: grab
+    }
+
+    .node:active {
+      cursor: grabbing
+    }
+
+    .project rect {
+      fill: url(#gradProj);
+      stroke: #cabdff;
+      stroke-width: 1
+    }
+
+    .skill circle {
+      fill: url(#gradSkill);
+      stroke: #a9dfff;
+      stroke-width: 1
+    }
+
+    .label {
+      font-size: 12px;
+      pointer-events: none;
+      fill: #eaf3ff
+    }
+
+    .label.halo {
+      stroke: #081126;
+      stroke-width: 3;
+      opacity: .8;
+      fill: none
+    }
+
+    .faded {
+      opacity: .25
+    }
+
+    .glowCyan {
+      filter: url(#glowCyan)
+    }
+
+    .glowViolet {
+      filter: url(#glowViolet)
+    }
+
+    .tooltip {
+      position: absolute;
+      z-index: 4;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .15s ease;
+      background: #0d1528;
+      border: 1px solid rgba(255, 255, 255, .08);
+      border-radius: 10px;
+      padding: 8px 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .45)
+    }
+
+    .tooltip.visible {
+      opacity: 1
+    }
+
+    .muted {
+      color: var(--muted)
+    }
+
+    /* ---------- 4) Timeline ---------- */
+    .timeline {
+      display: grid;
+      gap: 18px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .timeline-item .dotline {
+      display: grid;
+      justify-items: center;
+      gap: 15px;
+    }
+
+    .timeline-item .dot {
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      background: rgba(11, 142, 242, 0.837);
+      box-shadow: 0 0 18px rgba(7, 3, 224, 0.5);
+      margin-top: 8px;
+    }
+
+    .timeline-item .line {
+      width: 2px;
+      height: 100%;
+      background: linear-gradient(var(--line), transparent);
+    }
+
+    .timeline-card {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255, 255, 255, .02), rgba(255, 255, 255, 0));
+      border-radius: 16px;
+      padding: 14px 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .timeline-card h4 {
+      margin: 0 0 6px;
+      font-size: 16px
+    }
+
+    .timeline-card p {
+      margin: 0;
+      color: var(--muted)
+    }
+
+    /* ---------- 5) Gamified Badges ---------- */
+    .awards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    .award {
+      position: relative;
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, .08);
+      background:
+        linear-gradient(135deg, rgba(134, 225, 255, .08), rgba(140, 123, 255, .08)),
+        #0b162a;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+
+    .award::after {
+      content: "";
+      position: absolute;
+      inset: -40% -20%;
+      background: radial-gradient(closest-side, rgba(255, 255, 255, .12), transparent 65%);
+      transform: translateX(-60%) rotate(12deg);
+      filter: blur(18px);
+      opacity: .25;
+      pointer-events: none;
+    }
+
+    .award:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 50px rgba(0, 0, 0, .45)
+    }
+
+    .award .title {
+      font-size: 18px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .award p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px
+    }
+
+    /* ---------- 6) Radar Chart ---------- */
+    .radar {
+      display: grid;
+      justify-items: center;
+      gap: 10px;
+    }
+
+    .radar canvas {
+      width: min(720px, 100%);
+      height: auto;
+      background: #0a1324;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .caption {
+      color: var(--muted);
+      font-size: 13px
+    }
+
+    /* ---------- Utilities ---------- */
+    .row {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 960px) {
+      .row-2 {
+        grid-template-columns: 1.2fr .8fr
+      }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .card-inner {
+        transition: none
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="shell" role="main">
+    <header class="hero" aria-labelledby="hero-title">
+      <span class="chip" aria-label="Section">Skills, but actually delightful ✨</span>
+      <h1 id="hero-title" class="title">Flexing my skills in different story, structure & style</h1>
+      <p class="subtitle">
+        Just a try to showcase my skills with my design skills. Just to Make things interesting. That's also a skill. 
+      </p>
+    </header>
+
+    <!-- 1) Skill Galaxy -->
+    <section class="block" aria-labelledby="galaxy-h">
+      <div class="block-head">
+        <h2 id="galaxy-h">🌌 Interactive Skill Galaxy</h2>
+        <span class="pill">Hover stars → details • drag to orbit</span>
+      </div>
+      <div class="block-body">
+        <div class="galaxy-wrap" id="galaxy">
+          <div id="galaxyCanvas" aria-label="3D skills starfield"></div>
+          <div class="tooltip" id="galaxyTip" role="tooltip" aria-hidden="true"></div>
+          <div class="legend" aria-hidden="false">
+            <div class="key"><span class="dot" style="background:#86e1ff"></span> Programming</div>
+            <div class="key"><span class="dot" style="background:#8c7bff"></span> Data/AI</div>
+            <div class="key"><span class="dot" style="background:#00ffa3"></span> Web/Frameworks</div>
+            <div class="key"><span class="dot" style="background:#ffb86b"></span> Databases/Cloud</div>
+            <div class="key"><span class="dot" style="background:#ffffff"></span> SoftSkills</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="row row-2">
+      <!-- 2) Flip Cards -->
+      <section class="block" aria-labelledby="cards-h">
+        <div class="block-head">
+          <h2 id="cards-h">Flip to know how I learnt that skill 🎴</h2>
+          <span class="pill">Flip on hover</span>
+        </div>
+        <div class="block-body">
+          <div class="cards" id="cardGrid" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <!-- 5) Gamified Badges -->
+      <section class="block" aria-labelledby="badges-h">
+        <div class="block-head">
+          <h2 id="badges-h">Skill Badges 🏆</h2>
+          <span class="pill">Most of Languages and tools</span>
+        </div>
+        <div class="block-body">
+          <div class="awards" id="awards"></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- 3) Project ↔ Skill Graph -->
+    <section class="block" aria-labelledby="graph-h">
+      <div class="wrap">
+        <section class="card">
+          <div class="card-head">
+            <h2>Project Skill Web 🕸️</h2>
+            <div class="legend">
+              <span class="k"><span class="sw" style="background:var(--violet)"></span> Project</span>
+              <span class="k"><span class="sw" style="background:var(--cyan)"></span> Skill</span>
+              <span class="k">Drag nodes • Hover to highlight</span>
+            </div>
+          </div>
+          <div class="box">
+            <div class="box-mask">
+              <svg id="graph" role="img" aria-label="Interactive force-directed graph"></svg>
+            </div>
+            <div id="tip" class="tooltip" role="tooltip" aria-hidden="true"></div>
+          </div>
+        </section>
+      </div>
+
+    </section>
+
+    <!-- 4) Timeline -->
+    <section class="block" aria-labelledby="timeline-h">
+      <div class="block-head">
+        <h2 id="timeline-h">ExtraCurricular Skills 🏀</h2>
+        <span class="pill">Interests and hobbies</span>
+      </div>
+      <div class="block-body">
+        <div class="timeline" id="timeline"></div>
+      </div>
+    </section>
+
+    <!-- 6) Radar Chart -->
+    <section class="block" aria-labelledby="radar-h">
+      <div class="block-head">
+        <h2 id="radar-h">Skills Radar - Gamer Inspired📊</h2>
+        <span class="pill">Category strength overview</span>
+      </div>
+      <div class="block-body">
+        <div class="radar">
+          <canvas id="radar" aria-label="Skill radar chart" role="img"></canvas>
+          <div class="caption">This snapshot avoids vague “% bars” and focuses on relative category strengths.</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ---------- Scripts (all plain, lazy where heavy) ---------- -->
+  <script>
+    // Data tailored to your profile; tweak freely
+    const DATA = {
+      skills: [
+        { name: "Python", group: "Programming", color: "#86e1ff", note: "Swiss-Army knife: ML, automation, tooling", projects: ["AI Heart Sound", "Stroke Detection", "RVM YOLO"] },
+        { name: "C++", group: "Programming", color: "#86e1ff", note: "Competitive programming & systems", projects: ["DSA Coaching", "Contest Utils"] },
+        { name: "Java", group: "Programming", color: "#86e1ff", note: "APIs + Spring stack (REST/WAR/Tomcat)", projects: ["Ticket System", "SOAP→REST"] },
+        { name: "JavaScript", group: "Programming", color: "#86e1ff", note: "Interactive UIs, charting & 3D", projects: ["Portfolio", "Flashcards App"] },
+
+        { name: "Deep Learning", group: "Data/AI", color: "#8c7bff", note: "CNNs for PCG & radiography", projects: ["AI Heart Sound", "Covid Radiography"] },
+        { name: "PySpark", group: "Data/AI", color: "#8c7bff", note: "Distributed ETL at scale", projects: ["Barclays Internship"] },
+        { name: "Scala", group: "Data/AI", color: "#8c7bff", note: "Spark pipelines & ops", projects: ["Barclays Internship"] },
+
+        { name: "React", group: "Web/Frameworks", color: "#00ffa3", note: "Smooth UX, animations, routing", projects: ["Portfolio", "Gallery"] },
+        { name: "Spring Boot", group: "Web/Frameworks", color: "#00ffa3", note: "Robust REST APIs", projects: ["REST Service"] },
+        { name: "Three.js", group: "Web/Frameworks", color: "#00ffa3", note: "3D visuals & interactions", projects: ["Portfolio"] },
+
+        { name: "PostgreSQL", group: "DB/Cloud", color: "#ffb86b", note: "Relational design & query tuning", projects: ["Ticket System", "Stargate DB"] },
+        { name: "Oracle DB", group: "DB/Cloud", color: "#ffb86b", note: "PL/SQL & enterprise flows", projects: ["Barclays Internship"] },
+
+        { name: "Git/Docker", group: "Tools/Soft", color: "#ffffff", note: "Delivery, CI/CD & environments", projects: ["EC2 Deployments"] },
+        { name: "Leadership", group: "Tools/Soft", color: "#ffffff", note: "CTO @ CIC, team captain", projects: ["Clubs & Events"] }
+      ],
+      projects: [
+        { id: "AI Heart Sound", kind: "project", desc: "PCG murmur detection with DL" },
+        { id: "Stroke Detection", kind: "project", desc: "Radiography region detection" },
+        { id: "Covid Radiography", kind: "project", desc: "ResNet50 classification" },
+        { id: "RVM YOLO", kind: "project", desc: "Reverse Vending Machine vision" },
+        { id: "Portfolio", kind: "project", desc: "Personal 3D/animated site" },
+        { id: "REST Service", kind: "project", desc: "Spring Boot WAR on Tomcat" },
+        { id: "Ticket System", kind: "project", desc: "Ops workflow with PostgreSQL" },
+        { id: "SOAP→REST", kind: "project", desc: "Service modernization & perf" },
+        { id: "Barclays Internship", kind: "project", desc: "PySpark/Scala data pipelines" },
+        { id: "EC2 Deployments", kind: "project", desc: "Infra & rollout on AWS" },
+        { id: "Gallery", kind: "project", desc: "Pinterest-style collage" },
+        { id: "Flashcards App", kind: "project", desc: "Colab reading & UI flows" },
+        { id: "Clubs & Events", kind: "project", desc: "Leadership & org execution" },
+        { id: "DSA Coaching", kind: "project", desc: "Teaching & mentoring" },
+        { id: "Contest Utils", kind: "project", desc: "CP helper tools" }
+      ],
+      cards: [
+        { title: "🐍 Data Structures & Algorithms", back: "Mom: C++, Lover: Python, Wife: Java" },
+        { title: "🗄️ Database Management & Operating Systems", back: "From Normalisation to Deadlocks. Having SQL & Bash as the best companions in Office" },
+        { title: "⚙️ Artificial Intelligence", back: "From Neural Networks to GenAI to AI Agents : Living with AI" },
+        { title: "🧠 Data Science", back: "Pattern Recognition, Machine Learning, Deep Learning - All started from that first Data Science." },
+        { title: "🌐 Microservices", back: "Soap Services JARs in On prem severs to Rest APIs Pods in Openshift to GraphQL Lambdas in AWS. Worked on all kinds on all env" },
+        { title: "🔁 Full Stack Development", back: "I believe my websites should be enough to speak about these, but yes hands slighly tight on backend but can manage" }
+      ],
+      badges: [
+        { title: "🛡️ Database Guardian", text: "MSSQL, Postgres, Mongo, Oracle" },
+        { title: "⚡ Speed Coder", text: "C++, Python, Java competitive programming & systems thinking" },
+        { title: "🧪 API Craftsman", text: "Spring MVC/Boot, SOAP → REST → GraphQL, Java Developer" },
+        { title: "🧠 AI Alchemist", text: "Python, ML, DL, CV, GPT" },
+        { title: "🚀 Ship It", text: "Git, Bitbucket, Docker, EC2, CI/CD" },
+        { title: "🎴 GenZAI", text: "OpenAI, Geimini, Claude, , Perplexity, Grok, Building my own" }
+      ],
+      timeline: [
+        { when: "2014", title: "Musician", text: "Keyboardist in band, Stage Performer, Leader of Band Anonymous" },
+        { when: "2014", title: "Basketball", text: "Life Devoted to Basketball - Ex- College Team Captain - Now Coach" },
+        { when: "2016", title: "Chess", text: "Started serious, now playing for fun ruining mental peace after losses" },
+        { when: "2022", title: "Cross-Fitness", text: "Not the regular weight lifter (Leg press PR - 250kgs) Cross fitness athlete" },
+        { when: "2023", title: "Teaching and Mentoring", text: "Love Teaching and Mentoring students" },
+        { when: "2024", title: "Public Speaking", text: "Sharing my knowledge and getting rid of my childhood fear" }
+      ],
+      radar: {
+        labels: ["Leadership", "Distraction", "Team Work", "Drive", "Grasping ability", "Time Management" ],
+        values: [92, 75, 92, 98, 94, 86]
+      },
+        nodes: [
+    { id: "Portfolio Website",     type: "project", desc: "3D visuals + animations with React/Three.js" },
+    { id: "AI GIF Generator",      type: "project", desc: "Diffusion pipeline & tooling" },
+    { id: "Heart Sound Detection", type: "project", desc: "PCG murmurs classification with DL" },
+    { id: "Ticket System",         type: "project", desc: "Spring Boot + PostgreSQL workflow" },
+
+    { id: "JavaScript",       type: "skill", group: "Programming" },
+    { id: "React",            type: "skill", group: "Web" },
+    { id: "Three.js",         type: "skill", group: "Web" },
+    { id: "Python",           type: "skill", group: "Programming" },
+    { id: "Deep Learning",    type: "skill", group: "AI/ML" },
+    { id: "Signal Processing",type: "skill", group: "AI/ML" },
+    { id: "Spring Boot",      type: "skill", group: "Backend" },
+    { id: "PostgreSQL",       type: "skill", group: "DB" }
+  ],
+  links: [
+    { source: "Portfolio Website",     target: "JavaScript" },
+    { source: "Portfolio Website",     target: "React" },
+    { source: "Portfolio Website",     target: "Three.js" },
+
+    { source: "AI GIF Generator",      target: "Python" },
+    { source: "AI GIF Generator",      target: "Deep Learning" },
+
+    { source: "Heart Sound Detection", target: "Python" },
+    { source: "Heart Sound Detection", target: "Deep Learning" },
+    { source: "Heart Sound Detection", target: "Signal Processing" },
+
+    { source: "Ticket System",         target: "Spring Boot" },
+    { source: "Ticket System",         target: "PostgreSQL" },
+
+    { source: "Portfolio Website",         target: "Ticket System" },
+    { source: "Portfolio Website",         target: "AI GIF Generator" },
+    { source: "Portfolio Website",         target: "Heart Sound Detection" },
+    { source: "Heart Sound Detection",         target: "Ticket System" },
+    { source: "Heart Sound Detection",         target: "AI GIF Generator" },
+    { source: "AI GIF Generator",         target: "Ticket System" }
+
+  ]
+    };
+
+    /* ---------- Populate simple DOM-driven sections ---------- */
+    (function renderCards() {
+      const grid = document.getElementById('cardGrid');
+      grid.innerHTML = DATA.cards.map(c => `
+        <article class="card" aria-label="${c.title}">
+          <div class="card-inner" tabindex="0" aria-roledescription="flip card">
+            <div class="face front">${c.title}</div>
+            <div class="face back"><span>${c.back}</span></div>
+          </div>
+        </article>
+      `).join('');
+      // Keyboard flip for a11y
+      grid.querySelectorAll('.card-inner').forEach(el => {
+        el.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            el.style.transform = el.style.transform ? '' : 'rotateY(180deg)';
+          }
+        });
+      });
+    })();
+
+    (function renderBadges() {
+      const wrap = document.getElementById('awards');
+      wrap.innerHTML = DATA.badges.map(b => `
+        <div class="award" role="note" aria-label="${b.title.replaceAll('"', '')}">
+          <div class="title">${b.title}</div>
+          <p>${b.text}</p>
+        </div>
+      `).join('');
+    })();
+
+    (function renderTimeline() {
+      const host = document.getElementById('timeline');
+      host.innerHTML = DATA.timeline.map((t, i, arr) => `
+        <div class="timeline-item">
+          <div class="dotline">
+            <span class="dot" aria-hidden="true"></span>
+            <span class="line" style="opacity:${i === arr.length - 1 ? .15 : 1}"></span>
+          </div>
+          <div class="timeline-card">
+            <h4>${t.title}</h4>
+            <p>${t.text}</p>
+          </div>
+        </div>
+      `).join('');
+    })();
+
+    /* ---------- Helpers: lazy load scripts when visible ---------- */
+    const loadScript = (src) => new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = src; s.async = true; s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
+    });
+
+    const onVisible = (el, cb) => {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            io.disconnect();
+            cb();
+          }
+        });
+      }, { threshold: .2 });
+      io.observe(el);
+    };
+
+    /* ---------- 1) Three.js Galaxy (pickable stars + tooltip) ---------- */
+    onVisible(document.getElementById('galaxy'), async () => {
+      await loadScript('https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js');
+
+      const mount = document.getElementById('galaxyCanvas');
+      const tip = document.getElementById('galaxyTip');
+      const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(60, mount.clientWidth / mount.clientHeight, 0.1, 100);
+      camera.position.set(0, 0, 12);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      renderer.setSize(mount.clientWidth, mount.clientHeight);
+      mount.appendChild(renderer.domElement);
+
+      // Subtle space fog
+      scene.fog = new THREE.FogExp2(0x071020, 0.06);
+
+      // Create positions & per-point color
+      const groups = {
+        "Programming": "#86e1ff",
+        "Data/AI": "#8c7bff",
+        "Web/Frameworks": "#00ffa3",
+        "DB/Cloud": "#ffb86b",
+        "Tools/Soft": "#ffffff"
+      };
+
+      const pointsGeo = new THREE.BufferGeometry();
+      const N = DATA.skills.length;
+      const pos = new Float32Array(N * 3);
+      const col = new Float32Array(N * 3);
+
+      // Orbiting distribution per group
+      const groupRadius = {
+        "Programming": 4.5,
+        "Data/AI": 3.7,
+        "Web/Frameworks": 3.0,
+        "DB/Cloud": 2.3,
+        "Tools/Soft": 5.2
+      };
+
+      const color = new THREE.Color();
+      const skillMeta = []; // index → data
+
+      DATA.skills.forEach((s, i) => {
+        const r = groupRadius[s.group] || 3.5;
+        const t = Math.random() * Math.PI * 2;
+        const y = (Math.random() - .5) * 1.8;
+        pos[i * 3 + 0] = Math.cos(t) * r;
+        pos[i * 3 + 1] = y;
+        pos[i * 3 + 2] = Math.sin(t) * r;
+
+        color.set(s.color || groups[s.group] || "#ffffff");
+        col[i * 3 + 0] = color.r;
+        col[i * 3 + 1] = color.g;
+        col[i * 3 + 2] = color.b;
+
+        skillMeta[i] = s;
+      });
+
+      pointsGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      pointsGeo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+
+      const mat = new THREE.PointsMaterial({
+        size: 0.15, sizeAttenuation: true, vertexColors: true, transparent: true,
+        opacity: 0.95, depthWrite: false
+      });
+      const stars = new THREE.Points(pointsGeo, mat);
+      scene.add(stars);
+
+      // Core glow
+      const coreGeo = new THREE.SphereGeometry(0.5, 32, 32);
+      const coreMat = new THREE.MeshBasicMaterial({ color: 0x86e1ff, transparent: true, opacity: .6 });
+      const core = new THREE.Mesh(coreGeo, coreMat);
+      scene.add(core);
+
+      const raycaster = new THREE.Raycaster();
+      const mouse = new THREE.Vector2(-1, -1);
+      let hoveredIndex = -1;
+
+      function onMove(e) {
+        const rect = renderer.domElement.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        const y = - ((e.clientY - rect.top) / rect.height) * 2 + 1;
+        mouse.set(x, y);
+      }
+      renderer.domElement.addEventListener('mousemove', onMove);
+
+      function renderTooltip(i, evt) {
+        const s = skillMeta[i];
+        if (!s) return;
+        tip.innerHTML = `<strong>${s.name}</strong><br/><span style="color:var(--muted)">${s.group}</span><br/>${s.note}<br/><small>Projects: ${s.projects.join(", ")}</small>`;
+        tip.classList.add('visible'); tip.setAttribute('aria-hidden', 'false');
+        // position near cursor
+        const rect = renderer.domElement.getBoundingClientRect();
+        const cx = (mouse.x * .5 + .5) * rect.width + rect.left;
+        const cy = (-mouse.y * .5 + .5) * rect.height + rect.top;
+        tip.style.left = cx + 'px';
+        tip.style.top = cy + 'px';
+      }
+      function hideTooltip() {
+        tip.classList.remove('visible'); tip.setAttribute('aria-hidden', 'true');
+      }
+
+      // Orbit animation
+      let t0 = performance.now();
+      function tick(now) {
+        const dt = (now - t0) / 1000; t0 = now;
+        if (!prefersReduced) stars.rotation.y += dt * 0.08;
+
+        // Hover detection
+        raycaster.setFromCamera(mouse, camera);
+        const itx = raycaster.intersectObject(stars);
+        if (itx.length) {
+          const idx = itx[0].index;
+          if (idx !== hoveredIndex) {
+            hoveredIndex = idx;
+            renderTooltip(idx);
+          } else {
+            renderTooltip(idx);
+          }
+        } else {
+          hoveredIndex = -1;
+          hideTooltip();
+        }
+
+        renderer.render(scene, camera);
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+
+      // Resize
+      const onResize = () => {
+        const w = mount.clientWidth, h = mount.clientHeight;
+        renderer.setSize(w, h);
+        camera.aspect = w / h; camera.updateProjectionMatrix();
+      };
+      new ResizeObserver(onResize).observe(mount);
+    });
+
+    // Force Graph
+onVisible(document.getElementById('graph'), async () => {
+  await loadScript('https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js');
+
+  /* =============== DOM & Sizing helpers (robust) =============== */
+  const svg = d3.select('#graph');
+  const tip = d3.select('#tip');
+  const container = svg.node().parentElement; // .box-mask
+  const state = { width: 0, height: 0, margin: 24 };
+
+  function measure() {
+    const r = container.getBoundingClientRect();
+    return {
+      w: Math.max(1, r.width || container.clientWidth || 0),
+      h: Math.max(1, r.height || container.clientHeight || 0)
+    };
+  }
+  function sizeSVG() {
+    const { w, h } = measure();
+    state.width = w; state.height = h;
+    svg.attr('viewBox', `0 0 ${w} ${h}`).attr('width', w).attr('height', h);
+  }
+
+  /* Wait until container has size before building graph */
+  (function whenReady(build){
+    const tick = () => {
+      const { w, h } = measure();
+      if (w > 2 && h > 2) { build(); }
+      else requestAnimationFrame(tick);
+    };
+    tick();
+  })(initGraph);
+
+  /* =============== Build graph =============== */
+  function initGraph(){
+    sizeSVG();
+
+  // Deep copies for safety
+  const nodes = DATA.nodes.map(d => ({...d}));
+  const links = DATA.links.map(l => ({...l}));
+
+  /* ---------- Defs (gradients + glow) ---------- */
+  const defs = svg.append('defs');
+  defs.append('linearGradient').attr('id','gradSkill').attr('x1','0').attr('x2','0').attr('y1','0').attr('y2','1')
+    .selectAll('stop').data([{o:'0%',c:'#bfeaff'},{o:'100%',c:'#70cfff'}]).enter()
+    .append('stop').attr('offset',d=>d.o).attr('stop-color',d=>d.c);
+  defs.append('linearGradient').attr('id','gradProj').attr('x1','0').attr('x2','0').attr('y1','0').attr('y2','1')
+    .selectAll('stop').data([{o:'0%',c:'#c8c0ff'},{o:'100%',c:'#9e90ff'}]).enter()
+    .append('stop').attr('offset',d=>d.o).attr('stop-color',d=>d.c);
+  const glowC = defs.append('filter').attr('id','glowCyan').attr('x','-50%').attr('y','-50%').attr('width','200%').attr('height','200%');
+  glowC.append('feGaussianBlur').attr('stdDeviation','4').attr('result','b');
+  glowC.append('feMerge').selectAll('feMergeNode').data(['b',null]).enter().append('feMergeNode').attr('in',d=>d||'SourceGraphic');
+  const glowV = defs.append('filter').attr('id','glowViolet').attr('x','-50%').attr('y','-50%').attr('width','200%').attr('height','200%');
+  glowV.append('feGaussianBlur').attr('stdDeviation','4').attr('result','bv');
+  glowV.append('feMerge').selectAll('feMergeNode').data(['bv',null]).enter().append('feMergeNode').attr('in',d=>d||'SourceGraphic');
+
+  /* ---------- Layers ---------- */
+  const gBack = svg.append('g');
+  const gFront = svg.append('g');
+
+  /* ---------- Link paths (curved, animated) ---------- */
+  const link = gBack.selectAll('path')
+    .data(links)
+    .join('path')
+    .attr('class','link anim-dash')
+    .attr('stroke-width',1.8);
+
+  /* ---------- Node groups ---------- */
+  const isProject = d => d.type === 'project';
+  const PILL_W = 160, PILL_H = 36, SKILL_R = 16;
+
+  // Assign anchors at corners for projects (if exactly 4)
+  const m = state.margin + 10;
+  const anchors4 = [
+    {x: m + PILL_W/2,                   y: m + PILL_H/2},                    // TL
+    {x: state.width - m - PILL_W/2,     y: m + PILL_H/2},                    // TR
+    {x: state.width - m - PILL_W/2,     y: state.height - m - PILL_H/2},     // BR
+    {x: m + PILL_W/2,                   y: state.height - m - PILL_H/2}      // BL
+  ];
+  const projects = nodes.filter(isProject);
+  if (projects.length === 4) {
+    projects.forEach((p, i) => {
+      p.anchor = { ...anchors4[i] };
+      p.x = p.anchor.x + (Math.random()-0.5)*8;
+      p.y = p.anchor.y + (Math.random()-0.5)*8;
+    });
+  } else {
+    // Fallback: place projects around a circle near the rim
+    const cx = state.width/2, cy = state.height/2, r = Math.min(state.width, state.height)/2 - 70;
+    projects.forEach((p,i) => {
+      const a = (i/projects.length)*2*Math.PI;
+      p.anchor = { x: cx + r*Math.cos(a), y: cy + r*Math.sin(a) };
+      p.x = p.anchor.x; p.y = p.anchor.y;
+    });
+  }
+
+  // Seed skill positions near the avg of their linked project anchors
+  const linksByTarget = d3.group(links, d => d.target);
+  nodes.filter(d => !isProject(d)).forEach(s => {
+    const ls = linksByTarget.get(s.id) || [];
+    const pts = ls.map(l => {
+      const p = projects.find(pp => pp.id === l.source);
+      return p && p.anchor ? p.anchor : {x: state.width/2, y: state.height/2};
+    });
+    const ax = d3.mean(pts, p => p.x) ?? state.width/2;
+    const ay = d3.mean(pts, p => p.y) ?? state.height/2;
+    s.x = ax + (Math.random()-0.5)*40;
+    s.y = ay + (Math.random()-0.5)*40;
+    s.anchor = {x: ax, y: ay}; // weak attraction to this centroid
+  });
+
+  const node = gFront.selectAll('g.node')
+    .data(nodes)
+    .join('g')
+    .attr('class', d => `node ${d.type}`)
+    .call(d3.drag()
+      .on('start', dragstarted)
+      .on('drag', dragged)
+      .on('end', dragended))
+    .on('mouseover', (e,d) => handleHover(d, true, e))
+    .on('mousemove', (e,d) => moveTip(e))
+    .on('mouseout',  (e,d) => handleHover(d, false, e));
+
+  node.each(function(d){
+    const sel = d3.select(this);
+    if (isProject(d)) {
+      d._w = PILL_W; d._h = PILL_H;
+      sel.append('rect').attr('x', -PILL_W/2).attr('y', -PILL_H/2)
+        .attr('width', PILL_W).attr('height', PILL_H).attr('rx', 18).attr('ry', 18);
+    } else {
+      d._r = SKILL_R;
+      sel.append('circle').attr('r', SKILL_R);
+    }
+  });
+
+  const labelHalo = gFront.selectAll('text.halo')
+    .data(nodes)
+    .join('text')
+    .attr('class','label halo')
+    .attr('text-anchor','middle')
+    .text(d => d.id);
+
+  const label = gFront.selectAll('text.label')
+    .data(nodes)
+    .join('text')
+    .attr('class','label')
+    .attr('text-anchor','middle')
+    .text(d => d.id);
+
+  /* ---------- Tooltip ---------- */
+  function showTip(d){
+    tip.html(isProject(d) ? `<b>PROJECT</b>: ${d.id}<div class="muted">${d.desc||''}</div>`
+                          : `<b>SKILL</b>: ${d.id}<div class="muted">${d.group||''}</div>`)
+       .classed('visible', true).attr('aria-hidden','false');
+  }
+  function hideTip(){ tip.classed('visible', false).attr('aria-hidden','true'); }
+  function moveTip(e){ tip.style('left', (e.pageX + 12) + 'px').style('top', (e.pageY - 18) + 'px'); }
+
+  /* ---------- Highlighting ---------- */
+  const linkBy = new Map();
+  links.forEach(l => { linkBy.set(`${l.source}→${l.target}`, true); linkBy.set(`${l.target}→${l.source}`, true); });
+  const isConnected = (a,b) => a===b || linkBy.get(`${a.id}→${b.id}`) || false;
+  function handleHover(d, on, evt){
+    if (on){
+      showTip(d); moveTip(evt);
+      node.classed('faded', n => !isConnected(d,n));
+      label.classed('faded', n => !isConnected(d,n));
+      labelHalo.classed('faded', n => !isConnected(d,n));
+      link.classed('highlight', l => (l.source.id||l.source)===d.id || (l.target.id||l.target)===d.id);
+      node.classed('glowCyan', n => isConnected(d,n) && !isProject(n))
+          .classed('glowViolet', n => isConnected(d,n) && isProject(n));
+    } else {
+      hideTip();
+      node.classed('faded', false).classed('glowCyan', false).classed('glowViolet', false);
+      label.classed('faded', false); labelHalo.classed('faded', false);
+      link.classed('highlight', false);
+    }
+  }
+
+  /* ---------- Forces ---------- */
+  // Custom "float" force: gentle time-varying nudges that make the graph feel alive
+  function forceFloat(strength = 0.03){
+    const phases = nodes.map((_,i)=> (Math.random()*Math.PI*2) + i*0.37);
+    return function(alpha){
+      const t = performance.now()/1000;
+      nodes.forEach((d,i)=>{
+        const k = strength*alpha;
+        d.vx += Math.sin(t + phases[i]) * k * 0.6;
+        d.vy += Math.cos(t*1.15 + phases[i]) * k * 0.6;
+      });
+    };
+  }
+
+  // Attraction to anchors (projects to corners; skills to the centroid of their projects)
+  const forceAnchorX = d3.forceX(d =>
+    isProject(d) ? d.anchor.x : d.anchor.x
+  ).strength(d => isProject(d) ? 0.15 : 0.06);
+
+  const forceAnchorY = d3.forceY(d =>
+    isProject(d) ? d.anchor.y : d.anchor.y
+  ).strength(d => isProject(d) ? 0.15 : 0.06);
+
+  const sim = d3.forceSimulation(nodes)
+    .force('link', d3.forceLink(links).id(d => d.id).distance(l => isProject(l.source)||isProject(l.target)? 120 : 90).strength(.85))
+    .force('charge', d3.forceManyBody().strength(-420))
+    .force('collide', d3.forceCollide().radius(d => isProject(d) ? 26 : 20).iterations(2))
+    .force('anchorX', forceAnchorX)
+    .force('anchorY', forceAnchorY)
+    .force('float', forceFloat(0.02))
+    .force('center', d3.forceCenter(state.width/2, state.height/2))
+    .alpha(1).restart();
+
+  /* ---------- Keep-in-box clamping ---------- */
+  function clamp(d){
+    const pad = state.margin;
+    if (isProject(d)){
+      const w = d._w || PILL_W, h = d._h || PILL_H;
+      d.x = Math.max(pad + w/2, Math.min(state.width - pad - w/2, d.x));
+      d.y = Math.max(pad + h/2, Math.min(state.height - pad - h/2, d.y));
+    } else {
+      const r = d._r || SKILL_R;
+      d.x = Math.max(pad + r, Math.min(state.width - pad - r, d.x));
+      d.y = Math.max(pad + r, Math.min(state.height - pad - r, d.y));
+    }
+  }
+
+  sim.on('tick', () => {
+    nodes.forEach(clamp);
+
+    link.attr('d', d => {
+      const s = d.source, t = d.target;
+      const x1 = s.x, y1 = s.y, x2 = t.x, y2 = t.y;
+      const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+      const dx = x2 - x1, dy = y2 - y1;
+      const norm = Math.hypot(dx, dy) || 1;
+      const off = Math.min(24, norm * 0.2);
+      const cx = mx - dy / norm * off;
+      const cy = my + dx / norm * off;
+      return `M ${x1},${y1} Q ${cx},${cy} ${x2},${y2}`;
+    });
+
+    node.attr('transform', d => `translate(${d.x},${d.y})`);
+    label.attr('x', d => d.x).attr('y', d => isProject(d) ? d.y + 4 : d.y + 28);
+    labelHalo.attr('x', d => d.x).attr('y', d => isProject(d) ? d.y + 4 : d.y + 28);
+  });
+
+  /* ---------- Drag behavior ---------- */
+  function dragstarted(event, d){
+    if (!event.active) sim.alphaTarget(0.3).restart();
+    d.fx = d.x; d.fy = d.y;
+    d._dragging = true;
+  }
+  function dragged(event, d){
+    const tmp = { ...d, x: event.x, y: event.y }; clamp(tmp);
+    d.fx = tmp.x; d.fy = tmp.y;
+  }
+  function dragended(event, d){
+    d._dragging = false;
+    if (isProject(d)){
+      // update the project's anchor to the released spot so the shape adapts
+      d.anchor.x = d.fx ?? d.x;
+      d.anchor.y = d.fy ?? d.y;
+    }
+    if (!event.active) sim.alphaTarget(0);
+    d.fx = null; d.fy = null;
+  }
+
+  /* ---------- Resize: recompute anchors (respect user-moved ones) ---------- */
+  function onResize(){
+    sizeSVG();
+    const m = state.margin + 10;
+    if (projects.length === 4){
+      const newAnchors = [
+        {x: m + PILL_W/2,                   y: m + PILL_H/2},
+        {x: state.width - m - PILL_W/2,     y: m + PILL_H/2},
+        {x: state.width - m - PILL_W/2,     y: state.height - m - PILL_H/2},
+        {x: m + PILL_W/2,                   y: state.height - m - PILL_H/2}
+      ];
+      projects.forEach((p,i) => {
+        // Only re-anchor if the user hasn't moved it far from its corner
+        if (!p.userMoved){
+          p.anchor.x = newAnchors[i].x;
+          p.anchor.y = newAnchors[i].y;
+        }
+      });
+    }
+    // Recompute skill centroids from current project anchors
+    nodes.filter(d=>!isProject(d)).forEach(s=>{
+      const ls = linksByTarget.get(s.id) || [];
+      const pts = ls.map(l => {
+        const pr = projects.find(pp => pp.id === l.source);
+        return pr ? pr.anchor : {x: state.width/2, y: state.height/2};
+      });
+      s.anchor.x = d3.mean(pts, p => p.x) ?? state.width/2;
+      s.anchor.y = d3.mean(pts, p => p.y) ?? state.height/2;
+    });
+
+    sim.force('center', d3.forceCenter(state.width/2, state.height/2));
+    sim.alpha(0.7).restart();
+  }
+  new ResizeObserver(onResize).observe(container);
+  window.addEventListener('resize', onResize);
+}
+  
+});
+
+    /* ---------- 6) Radar (Chart.js) ---------- */
+    onVisible(document.getElementById('radar'), async () => {
+      await loadScript('https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js');
+      const el = document.getElementById('radar');
+      const { labels, values } = DATA.radar;
+      const chart = new Chart(el, {
+        type: 'radar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Proficiency',
+            data: values,
+            borderWidth: 2,
+            borderColor: '#86e1ff',
+            pointBackgroundColor: '#ffffff',
+            backgroundColor: 'rgba(134,225,255,.15)'
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            r: {
+              angleLines: { color: '#25304a' },
+              grid: { color: '#25304a' },
+              pointLabels: { color: '#cfe6ff', font: { size: 12, weight: 600 } },
+              ticks: { showLabelBackdrop: false, color: '#9fb6d4', maxTicksLimit: 5 }
+            }
+          },
+          plugins: {
+            legend: { labels: { color: '#dbe9ff' } },
+            tooltip: { backgroundColor: '#0d1528', titleColor: '#fff', bodyColor: '#cfe6ff', borderColor: '#25304a', borderWidth: 1 }
+          }
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
